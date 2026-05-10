@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SEMO Digital Security Guide</title>
+  
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+
+  <style>
+    /* Defines all the missing colors and fonts so the formatting looks nice */
+    :root {
+      --font-sans: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      --color-text-primary: #111827;
+      --color-text-secondary: #4B5563;
+      --color-text-tertiary: #9CA3AF;
+      --color-border-secondary: #D1D5DB;
+      --color-border-tertiary: #E5E7EB;
+      --color-background-secondary: #F3F4F6;
+      --color-border-danger: #EF4444;
+      --color-border-warning: #F59E0B;
+      --color-border-info: #3B82F6;
+      --color-border-success: #10B981;
+      --border-radius-md: 6px;
+    }
+
+    *{box-sizing:border-box;margin:0;padding:0}
+    .sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)}
+    body{font-family:var(--font-sans);color:var(--color-text-primary);font-size:14px;line-height:1.6}
+    .wrap{max-width:420px;margin:0 auto;padding-bottom:32px; padding-top: 20px;}
+    .header{padding:24px 20px 20px;border-bottom:0.5px solid var(--color-border-tertiary)}
+    .header-title{font-size:22px;font-weight:500;color:var(--color-text-primary);line-height:1.2;margin-bottom:6px}
+    .header-sub{font-size:13px;color:var(--color-text-secondary)}
+    .nav{display:grid;grid-template-columns:repeat(4,1fr)}
+    .nb{padding:12px 4px 10px;border:none;background:transparent;font-family:var(--font-sans);font-size:11px;color:var(--color-text-secondary);cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;border-bottom:1.5px solid transparent;transition:color .15s,border-color .15s,background .15s;letter-spacing:0.02em}
+    .nb i{font-size:17px}
+    .nb:hover:not(.on){color:var(--color-text-primary)}
+    .nb.on.scams{color:#A32D2D;border-bottom-color:#A32D2D;background:#FCEBEB}
+    .nb.on.wifi{color:#185FA5;border-bottom-color:#185FA5;background:#E6F1FB}
+    .nb.on.ai{color:#633806;border-bottom-color:#854F0B;background:#FAEEDA}
+    .nb.on.priv{color:#3B6D11;border-bottom-color:#3B6D11;background:#EAF3DE}
+    .nav-border{height:0.5px;background:var(--color-border-tertiary)}
+    .sec{display:none;padding:24px 20px 0;animation:up .2s ease}
+    .sec.on{display:block}
+    @keyframes up{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+    .sec-title{font-size:18px;font-weight:500;margin-bottom:4px}
+    .sec-sub{font-size:13px;color:var(--color-text-secondary);margin-bottom:20px;line-height:1.5}
+    .divider{height:0.5px;background:var(--color-border-tertiary);margin:16px 0}
+    .row{display:flex;gap:12px;align-items:flex-start;padding:12px 0;border-bottom:0.5px solid var(--color-border-tertiary)}
+    .row:last-of-type{border-bottom:none}
+    .row-icon{width:18px;flex-shrink:0;margin-top:1px;color:var(--color-text-secondary)}
+    .row-icon i{font-size:16px}
+    .row-body{flex:1}
+    .row-title{font-size:13.5px;font-weight:500;margin-bottom:2px}
+    .row-text{font-size:13px;color:var(--color-text-secondary);line-height:1.5}
+    .step-block{display:flex;gap:14px;align-items:flex-start;padding:11px 0;border-bottom:0.5px solid var(--color-border-tertiary)}
+    .step-block:last-of-type{border-bottom:none}
+    .step-n{font-size:11px;font-weight:500;color:var(--color-text-tertiary);min-width:16px;margin-top:2px}
+    .step-text{font-size:13.5px;color:var(--color-text-primary);line-height:1.5}
+    .callout{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:14px 16px;margin:16px 0}
+    .callout-title{font-size:13px;font-weight:500;margin-bottom:3px}
+    .callout-text{font-size:13px;color:var(--color-text-secondary);line-height:1.5}
+    .danger-line{border-left:2px solid var(--color-border-danger);border-radius:0;padding-left:12px}
+    .warn-line{border-left:2px solid var(--color-border-warning);border-radius:0;padding-left:12px}
+    .info-line{border-left:2px solid var(--color-border-info);border-radius:0;padding-left:12px}
+    .success-line{border-left:2px solid var(--color-border-success);border-radius:0;padding-left:12px}
+    .link-row{display:flex;gap:8px;margin-top:20px;flex-wrap:wrap}
+    .lnk{font-size:12.5px;color:var(--color-text-secondary);text-decoration:none;padding:7px 12px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);cursor:pointer;background:transparent;font-family:var(--font-sans);transition:background .12s}
+    .lnk:hover{background:var(--color-background-secondary)}
+    .os-tabs{display:flex;gap:0;margin-bottom:18px;border-bottom:0.5px solid var(--color-border-tertiary)}
+    .ot{padding:10px 16px 9px;border:none;background:transparent;font-family:var(--font-sans);font-size:13px;color:var(--color-text-secondary);cursor:pointer;border-bottom:1.5px solid transparent;margin-bottom:-0.5px;transition:color .15s,border-color .15s}
+    .ot.on{color:var(--color-text-primary);border-bottom-color:var(--color-text-primary)}
+    .os-panel{display:none}
+    .os-panel.on{display:block}
+    .setting-row{display:flex;gap:12px;align-items:flex-start;padding:12px 0;border-bottom:0.5px solid var(--color-border-tertiary)}
+    .setting-row:last-of-type{border-bottom:none}
+    .sr-label{font-size:13.5px;font-weight:500;margin-bottom:3px}
+    .sr-path{font-size:12px;color:var(--color-text-secondary);font-family:var(--font-mono);background:var(--color-background-secondary);padding:2px 6px;border-radius:4px;display:inline-block;margin-top:2px;line-height:1.6}
+    .sr-icon{width:18px;flex-shrink:0;margin-top:2px;color:var(--color-text-tertiary)}
+    .sr-icon i{font-size:15px}
+    .section-label{font-size:11px;letter-spacing:0.06em;text-transform:uppercase;color:var(--color-text-tertiary);margin-bottom:10px;font-weight:500}
+  </style>
+</head>
+<body>
+
+  <h2 class="sr-only">SEMO Digital Security Guide covering scams, public wi-fi, AI deepfakes, and quick device settings</h2>
+
+  <div class="wrap">
+
+    <div class="header">
+      <h1 class="header-title">SEMO Digital Security Guide</h1>
+      <p class="header-sub">Practical security for students, faculty, and staff.</p>
+    </div>
+
+    <nav class="nav" role="tablist">
+      <button class="nb on scams" onclick="showSec('phishing','scams',this)" role="tab" aria-selected="true">
+        <i class="ti ti-fish-hook" aria-hidden="true"></i>Scams
+      </button>
+      <button class="nb" onclick="showSec('wifi','wifi',this)" role="tab" aria-selected="false">
+        <i class="ti ti-wifi-off" aria-hidden="true"></i>Wi-Fi
+      </button>
+      <button class="nb" onclick="showSec('ai','ai',this)" role="tab" aria-selected="false">
+        <i class="ti ti-robot" aria-hidden="true"></i>AI fakes
+      </button>
+      <button class="nb" onclick="showSec('settings','priv',this)" role="tab" aria-selected="false">
+        <i class="ti ti-adjustments-horizontal" aria-hidden="true"></i>Settings
+      </button>
+    </nav>
+    <div class="nav-border"></div>
+
+    <div id="s-phishing" class="sec on">
+      <p class="sec-title">Stop. Verify. Report.</p>
+      <p class="sec-sub">Scammers use email, text, and calls to steal credentials and money, often posing as SEMO IT, professors, or banks.</p>
+
+      <p class="section-label">Warning signs</p>
+      <div class="row">
+        <div class="row-icon"><i class="ti ti-clock-exclamation" aria-hidden="true"></i></div>
+        <div class="row-body">
+          <p class="row-title">Urgency and pressure</p>
+          <p class="row-text">"Act now," "Account suspended," "Last chance." Legitimate senders don't demand instant action.</p>
+        </div>
+      </div>
+      <div class="row">
+        <div class="row-icon"><i class="ti ti-link" aria-hidden="true"></i></div>
+        <div class="row-body">
+          <p class="row-title">Unexpected links or attachments</p>
+          <p class="row-text">Hover before clicking. A link that says "semo.edu" may go somewhere else entirely.</p>
+        </div>
+      </div>
+      <div class="row">
+        <div class="row-icon"><i class="ti ti-user-question" aria-hidden="true"></i></div>
+        <div class="row-body">
+          <p class="row-title">Generic or mismatched sender</p>
+          <p class="row-text">The display name can say anything. Check the actual email address. Real SEMO staff use @semo.edu.</p>
+        </div>
+      </div>
+      <div class="row">
+        <div class="row-icon"><i class="ti ti-gift" aria-hidden="true"></i></div>
+        <div class="row-body">
+          <p class="row-title">Gift cards or wire transfers</p>
+          <p class="row-text">No legitimate employer, professor, or IT department will ask for payment this way.</p>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <p class="section-label">What to do</p>
+      <div class="step-block"><span class="step-n">01</span><span class="step-text">Don't click links or open attachments. Close the message.</span></div>
+      <div class="step-block"><span class="step-n">02</span><span class="step-text">Open a fresh email or call the sender using a number you already have, not one in the message.</span></div>
+      <div class="step-block"><span class="step-n">03</span><span class="step-text">Forward suspicious messages to SEMO IT at helpdesk@semo.edu or report to the FTC at reportfraud.ftc.gov.</span></div>
+
+      <div class="callout danger-line" style="margin-top:20px">
+        <p class="callout-title">SEMO-specific: employment scams</p>
+        <p class="callout-text">Fake job offers spike each semester. High pay for little work is a red flag. Never share your SSN or banking details before meeting an employer in person.</p>
+      </div>
+
+      <div class="link-row">
+        <button class="lnk" onclick="openLink('mailto:helpdesk@semo.edu')">Email SEMO IT</button>
+        <button class="lnk" onclick="openLink('https://reportfraud.ftc.gov')">FTC report</button>
+      </div>
+    </div>
+
+    <div id="s-wifi" class="sec">
+      <p class="sec-title">Public wi-fi is public.</p>
+      <p class="sec-sub">On open networks, others can intercept unencrypted traffic. Verify the network, then use a VPN.</p>
+
+      <p class="section-label">Risks</p>
+      <div class="row">
+        <div class="row-icon"><i class="ti ti-eye" aria-hidden="true"></i></div>
+        <div class="row-body">
+          <p class="row-title">Traffic interception</p>
+          <p class="row-text">Unencrypted sessions, logins, and form data can be visible to others on the same network.</p>
+        </div>
+      </div>
+      <div class="row">
+        <div class="row-icon"><i class="ti ti-access-point" aria-hidden="true"></i></div>
+        <div class="row-body">
+          <p class="row-title">Fake hotspots</p>
+          <p class="row-text">Attackers create networks named "SEMO Free Wi-Fi" or similar. Always confirm the exact name with staff.</p>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <p class="section-label">What to do</p>
+      <div class="step-block"><span class="step-n">01</span><span class="step-text">Confirm the network name and password with a staff member before connecting.</span></div>
+      <div class="step-block"><span class="step-n">02</span><span class="step-text">Use a VPN. Proton VPN offers a free, unlimited, audited no-logs tier. For campus resources, use SEMO GlobalProtect.</span></div>
+      <div class="step-block"><span class="step-n">03</span><span class="step-text">Avoid banking and financial aid portals on public wi-fi. Switch to cellular data if you don't have a VPN.</span></div>
+      <div class="step-block"><span class="step-n">04</span><span class="step-text">Disable auto-join for open networks. Turn off Bluetooth and AirDrop when not in use.</span></div>
+
+      <div class="callout info-line" style="margin-top:20px">
+        <p class="callout-title">On-campus: use GlobalProtect</p>
+        <p class="callout-text">To access Banner, shared drives, or restricted SEMO resources from off-campus, connect through the SEMO GlobalProtect VPN first.</p>
+      </div>
+
+      <div class="link-row">
+        <button class="lnk" onclick="openLink('https://protonvpn.com')">Proton VPN (free)</button>
+      </div>
+    </div>
+
+    <div id="s-ai" class="sec">
+      <p class="sec-title">Real-sounding can still be fake.</p>
+      <p class="sec-sub">AI voice cloning and deepfake video can impersonate professors, family, or SEMO officials convincingly enough to request urgent action.</p>
+
+      <p class="section-label">How it works</p>
+      <div class="row">
+        <div class="row-icon"><i class="ti ti-microphone" aria-hidden="true"></i></div>
+        <div class="row-body">
+          <p class="row-title">Voice cloning</p>
+          <p class="row-text">A few seconds of public audio is enough to clone a voice. Calls can sound exactly like someone you know.</p>
+        </div>
+      </div>
+      <div class="row">
+        <div class="row-icon"><i class="ti ti-video" aria-hidden="true"></i></div>
+        <div class="row-body">
+          <p class="row-title">Deepfake video</p>
+          <p class="row-text">Look for unnatural blinking, blurred hair edges, waxy skin, or lips that don't quite sync with audio.</p>
+        </div>
+      </div>
+      <div class="row">
+        <div class="row-icon"><i class="ti ti-clock" aria-hidden="true"></i></div>
+        <div class="row-body">
+          <p class="row-title">Always paired with urgency</p>
+          <p class="row-text">Pressure to act fast and keep it secret is the consistent tell, regardless of how real it sounds.</p>
+        </div>
+      </div>
+
+      <div class="callout warn-line" style="margin-top:4px">
+        <p class="callout-title">Example</p>
+        <p class="callout-text">A voicemail from your professor asking you to email your SEMO login so they can submit your grade. Verify by composing a fresh email to their official @semo.edu address.</p>
+      </div>
+
+      <div class="divider"></div>
+
+      <p class="section-label">What to do</p>
+      <div class="step-block"><span class="step-n">01</span><span class="step-text">Pause. Refuse any urgent request for money, passwords, or data received through voice or video alone.</span></div>
+      <div class="step-block"><span class="step-n">02</span><span class="step-text">Hang up. Call back on a number you already have saved, not one they provided.</span></div>
+      <div class="step-block"><span class="step-n">03</span><span class="step-text">Set a codeword with family or close contacts for any payment request. A real person will know it.</span></div>
+      <div class="step-block"><span class="step-n">04</span><span class="step-text">Keep social profiles private to reduce the public audio and photos available for scraping.</span></div>
+    </div>
+
+    <div id="s-settings" class="sec">
+      <p class="sec-title">Quick privacy settings.</p>
+      <p class="sec-sub">High-impact changes you can make right now. Each takes under 30 seconds.</p>
+
+      <div class="os-tabs" role="tablist">
+        <button class="ot on" onclick="showOs('ios',this)" role="tab" aria-selected="true">iPhone</button>
+        <button class="ot" onclick="showOs('android',this)" role="tab" aria-selected="false">Android</button>
+      </div>
+
+      <div id="os-ios" class="os-panel on">
+        <div class="setting-row">
+          <div class="sr-icon"><i class="ti ti-eye-off" aria-hidden="true"></i></div>
+          <div>
+            <p class="sr-label">Stop app tracking</p>
+            <code class="sr-path">Settings / Privacy and Security / Tracking / off</code>
+          </div>
+        </div>
+        <div class="setting-row">
+          <div class="sr-icon"><i class="ti ti-map-pin" aria-hidden="true"></i></div>
+          <div>
+            <p class="sr-label">Limit location access</p>
+            <code class="sr-path">Settings / Privacy and Security / Location Services / set each app to "While Using"</code>
+          </div>
+        </div>
+        <div class="setting-row">
+          <div class="sr-icon"><i class="ti ti-ad-off" aria-hidden="true"></i></div>
+          <div>
+            <p class="sr-label">Turn off personalized ads</p>
+            <code class="sr-path">Settings / Privacy and Security / Apple Advertising / off</code>
+          </div>
+        </div>
+        <div class="setting-row">
+          <div class="sr-icon"><i class="ti ti-lock" aria-hidden="true"></i></div>
+          <div>
+            <p class="sr-label">Hide lock screen previews</p>
+            <code class="sr-path">Settings / Notifications / Show Previews / "When Unlocked"</code>
+          </div>
+        </div>
+        <div class="setting-row">
+          <div class="sr-icon"><i class="ti ti-map-2" aria-hidden="true"></i></div>
+          <div>
+            <p class="sr-label">Disable significant locations</p>
+            <code class="sr-path">Settings / Privacy / Location / System Services / Significant Locations / off</code>
+          </div>
+        </div>
+      </div>
+
+      <div id="os-android" class="os-panel">
+        <div class="setting-row">
+          <div class="sr-icon"><i class="ti ti-shield-check" aria-hidden="true"></i></div>
+          <div>
+            <p class="sr-label">Review permission dashboard</p>
+            <code class="sr-path">Settings / Security and Privacy / Privacy Dashboard</code>
+          </div>
+        </div>
+        <div class="setting-row">
+          <div class="sr-icon"><i class="ti ti-map-pin" aria-hidden="true"></i></div>
+          <div>
+            <p class="sr-label">Limit location per app</p>
+            <code class="sr-path">Settings / Apps / [App] / Permissions / Location / "Only while using"</code>
+          </div>
+        </div>
+        <div class="setting-row">
+          <div class="sr-icon"><i class="ti ti-ad-off" aria-hidden="true"></i></div>
+          <div>
+            <p class="sr-label">Delete advertising ID</p>
+            <code class="sr-path">Settings / Privacy / Ads / Delete Advertising ID</code>
+          </div>
+        </div>
+        <div class="setting-row">
+          <div class="sr-icon"><i class="ti ti-camera-off" aria-hidden="true"></i></div>
+          <div>
+            <p class="sr-label">Revoke camera and mic from unused apps</p>
+            <code class="sr-path">Settings / Apps / [App] / Permissions / Camera or Microphone / Deny</code>
+          </div>
+        </div>
+        <div class="setting-row">
+          <div class="sr-icon"><i class="ti ti-refresh" aria-hidden="true"></i></div>
+          <div>
+            <p class="sr-label">Auto-reset unused app permissions</p>
+            <code class="sr-path">Settings / Apps / [App] / Permissions / Allow permission resets / on</code>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout success-line" style="margin-top:20px">
+        <p class="callout-title">Enable MFA everywhere</p>
+        <p class="callout-text">Use Microsoft Authenticator or Google Authenticator for your SEMO account, bank, and social accounts. App-based MFA stops most account takeovers even when a password is stolen.</p>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+  function showSec(id,colorClass,btn){
+    document.querySelectorAll('.sec').forEach(s=>s.classList.remove('on'));
+    document.querySelectorAll('.nb').forEach(b=>{b.classList.remove('on','scams','wifi','ai','priv');b.setAttribute('aria-selected','false')});
+    document.getElementById('s-'+id).classList.add('on');
+    btn.classList.add('on',colorClass);
+    btn.setAttribute('aria-selected','true');
+  }
+  function showOs(id,btn){
+    document.querySelectorAll('.os-panel').forEach(p=>p.classList.remove('on'));
+    document.querySelectorAll('.ot').forEach(b=>{b.classList.remove('on');b.setAttribute('aria-selected','false')});
+    document.getElementById('os-'+id).classList.add('on');
+    btn.classList.add('on');btn.setAttribute('aria-selected','true');
+  }
+  function openLink(url){var a=document.createElement('a');a.href=url;a.target='_blank';a.rel='noopener';document.body.appendChild(a);a.click();document.body.removeChild(a)}
+  </script>
+</body>
+</html>
